@@ -18,18 +18,28 @@ zerops:
       start: uvicorn main:app --host 0.0.0.0 --port 8000
       workingDir: backend
 
-  - setup: web
+ - setup: web
     build:
       base: nodejs@20
+      workingDir: frontend
       buildCommands:
         - npm install
         - npm run build
       deployFiles:
-        - frontend/.next
-        - frontend/public
-        - frontend/package.json
-        - frontend/next.config.js
-        - frontend/node_modules
+        - .next
+        - public
+        - package.json
+        - next.config.js
+        - node_modules
+    run:
+      base: nodejs@20
+      workingDir: frontend
+      ports:
+        - port: 3000
+          httpSupport: true
+      envVariables:
+        NEXT_PUBLIC_API_URL: ${api_zeropsSubdomain}
+      start: npm run start
     run:
       base: nodejs@20
       ports:
