@@ -22,7 +22,7 @@ zerops:
       base: nodejs@20
       workingDir: frontend
       buildCommands:
-        - npm install
+        - npm install --legacy-peer-deps
         - npm run build
       deployFiles:
         - .next
