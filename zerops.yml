@@ -24,7 +24,6 @@ zerops:
         - cd frontend && npm install --legacy-peer-deps && npm run build
       deployFiles:
         - frontend/.next
-        - frontend/public
         - frontend/package.json
         - frontend/next.config.js
         - frontend/node_modules
