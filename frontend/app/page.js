@@ -10,6 +10,7 @@ export default function Home() {
   const [selectedIncidentId, setSelectedIncidentId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [question, setQuestion] = useState("");
+  const [anthropicKey, setAnthropicKey] = useState("");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [asking, setAsking] = useState(false);
@@ -68,7 +69,10 @@ export default function Home() {
     try {
       const res = await fetch(`${API_URL}/sre/diagnose`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(anthropicKey ? { "X-Anthropic-Key": anthropicKey } : {}),
+        },
         body: JSON.stringify({ incident_id: selectedIncident?.id, question: q }),
       });
       if (res.ok) {
@@ -172,6 +176,19 @@ export default function Home() {
             <div className={styles.detailDescription}>
               <strong>Metrics</strong>
               <pre className={styles.pre}>{selectedIncident.metrics || "No metric data available."}</pre>
+            </div>
+            <div className={styles.detailDescription}>
+              <label className={styles.label} htmlFor="anthropic-key-input">
+                Paste your Anthropic API key to use your own model credentials (not persisted)
+              </label>
+              <input
+                id="anthropic-key-input"
+                className={styles.input}
+                type="password"
+                placeholder="Enter Anthropic API key"
+                value={anthropicKey}
+                onChange={(e) => setAnthropicKey(e.target.value)}
+              />
             </div>
           </section>
         )}

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import List, Optional
 
 import requests
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, String, Text, DateTime, case
@@ -325,7 +325,7 @@ def refresh_incidents():
 
 
 @app.post("/sre/diagnose", response_model=DiagnoseResponse)
-def diagnose(payload: DiagnoseRequest):
+def diagnose(payload: DiagnoseRequest, request: Request):
     db = SessionLocal()
     try:
         incident = None
@@ -344,8 +344,15 @@ def diagnose(payload: DiagnoseRequest):
             f"Incident context:\n{prompt_context}\n\nQuestion: {payload.question}\n"
         )
 
-        if client is not None:
-            response = client.messages.create(
+        header_key = request.headers.get("x-anthropic-key", "").strip()
+        current_client = None
+        if header_key:
+            current_client = anthropic.Anthropic(api_key=header_key)
+        elif client is not None:
+            current_client = client
+
+        if current_client is not None:
+            response = current_client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=800,
                 system="You are SRE Forge AI, an autonomous incident triage assistant.",
