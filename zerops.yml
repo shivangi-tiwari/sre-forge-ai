@@ -16,7 +16,6 @@ zerops:
         CLAUDE_MODEL: claude-sonnet-4-6
         PYTHONPATH: deps
       start: python -m uvicorn main:app --host 0.0.0.0 --port 8000
-      workingDir: backend
 
   - setup: web
     build:
