@@ -20,16 +20,16 @@ zerops:
   - setup: web
     build:
       base: nodejs@20
-      workingDir: frontend
       buildCommands:
+        - cd frontend
         - npm install --legacy-peer-deps
         - npm run build
       deployFiles:
-        - .next
-        - public
-        - package.json
-        - next.config.js
-        - node_modules
+        - frontend/.next
+        - frontend/public
+        - frontend/package.json
+        - frontend/next.config.js
+        - frontend/node_modules
     run:
       base: nodejs@20
       workingDir: frontend
