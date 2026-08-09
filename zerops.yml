@@ -1,0 +1,41 @@
+zerops:
+  - setup: api
+    build:
+      base: python@3.11
+      buildCommands:
+        - pip install -r backend/requirements.txt
+      deployFiles:
+        - backend
+    run:
+      base: python@3.11
+      ports:
+        - port: 8000
+          httpSupport: true
+      envVariables:
+        DATABASE_URL: ${db_connectionString}
+        ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+        CLAUDE_MODEL: claude-sonnet-4-6
+      start: uvicorn main:app --host 0.0.0.0 --port 8000
+      workingDir: backend
+
+  - setup: web
+    build:
+      base: nodejs@20
+      buildCommands:
+        - npm install
+        - npm run build
+      deployFiles:
+        - frontend/.next
+        - frontend/public
+        - frontend/package.json
+        - frontend/next.config.js
+        - frontend/node_modules
+    run:
+      base: nodejs@20
+      ports:
+        - port: 3000
+          httpSupport: true
+      envVariables:
+        NEXT_PUBLIC_API_URL: https://api-<your-subdomain>.zerops.app
+      start: npm run start
+      workingDir: frontend

@@ -1,0 +1,19 @@
+project:
+  name: sre-forge-ai
+
+services:
+  - hostname: db
+    type: postgresql@16
+    mode: NON_HA
+
+  - hostname: api
+    type: python@3.11
+    buildFromGit: https://github.com/<your-username>/sre-forge-ai
+    envSecrets:
+      ANTHROPIC_API_KEY: <paste-your-anthropic-api-key>
+    minContainers: 1
+
+  - hostname: web
+    type: nodejs@20
+    buildFromGit: https://github.com/<your-username>/sre-forge-ai
+    minContainers: 1

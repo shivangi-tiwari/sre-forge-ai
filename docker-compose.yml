@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  sreforge-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: sreforge
+      POSTGRES_PASSWORD: sreforge
+      POSTGRES_DB: sreforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - sreforge-data:/var/lib/postgresql/data
+
+volumes:
+  sreforge-data:
