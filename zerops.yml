@@ -33,5 +33,5 @@ zerops:
         - port: 3000
           httpSupport: true
       envVariables:
-        NEXT_PUBLIC_API_URL: ${api_zeropsSubdomain}
+        NEXT_PUBLIC_API_URL: https://api-2e3e-8000.prg1.zerops.app
       start: bash -c "cd frontend && npm run start"
