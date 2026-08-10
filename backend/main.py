@@ -128,15 +128,17 @@ def _upsert_incident(db, item: dict):
     return incident
 
 
-def fetch_live_incidents() -> List[dict]:
+def fetch_live_incidents(github_token: Optional[str] = None) -> List[dict]:
+    token = github_token.strip() if github_token else GITHUB_TOKEN
     if not WATCHED_REPOS:
         raise HTTPException(500, "WATCHED_REPOS is not configured")
-    if not GITHUB_TOKEN:
+    if not token:
         raise HTTPException(500, "GITHUB_TOKEN is not configured")
 
     headers = {
-        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Authorization": f"token {token}",
         "Accept": "application/vnd.github+json",
+        "User-Agent": "SRE Forge AI",
     }
     incidents = []
 
@@ -309,11 +311,12 @@ def incident_stats():
 
 
 @app.post("/sre/refresh", response_model=List[IncidentOut])
-def refresh_incidents():
+def refresh_incidents(request: Request):
     db = SessionLocal()
     try:
+        github_token = request.headers.get("x-github-token", "").strip()
         try:
-            live_items = fetch_live_incidents()
+            live_items = fetch_live_incidents(github_token=github_token)
         except requests.RequestException as exc:
             raise HTTPException(502, f"Failed to fetch live incident data: {exc}")
 
