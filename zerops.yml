@@ -29,10 +29,9 @@ zerops:
         - frontend/node_modules
     run:
       base: nodejs@20
-      workingDir: frontend
       ports:
         - port: 3000
           httpSupport: true
       envVariables:
         NEXT_PUBLIC_API_URL: ${api_zeropsSubdomain}
-      start: npm run start
+      start: bash -c "cd frontend && npm run start"
